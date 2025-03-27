@@ -1,0 +1,40 @@
+/************************** LOGIN *****************/
+.bg-img {
+    background-image: url('../images/background.jpg'); /* Replace with your image path */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    max-width: 400px; /* Limit the max width */
+    width: 100%;
+}
+.header-text {
+    text-align: center;
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 1rem;
+}
+@media (max-width: 768px) {
+    .header-text {
+        font-size: 1.5rem; /* Adjust font size for smaller screens */
+    }
+    .login-container {
+        padding: 1.5rem; /* Adjust padding for smaller screens */
+    }
+}
+@media (max-width: 468px) {
+    .header-text {
+        font-size: 1.2rem; /* Further adjust font size for very small screens */
+    }
+    .login-container {
+        padding: 1rem; /* Further adjust padding for very small screens */
+    }
+}

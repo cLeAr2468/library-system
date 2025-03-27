@@ -1,0 +1,493 @@
+/* Sidebar Style */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+::after,
+::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.wrapper {
+    display: flex;
+}
+
+.main {
+    margin-top: 3%;
+    margin-left: 17%; /* Add margin to the left to avoid overlap with sidebar */
+    min-height: calc(100vh); /* Full height minus navbar */
+    width: calc(83%); /* Adjust width */
+    overflow-y: auto; /* Enable vertical scrolling */
+    transition: all 0.35s ease-in-out;
+    background-color: whitesmoke;
+}
+
+#sidebar {
+    position: fixed; /* Fixed position */
+    width: 70px;
+    min-width: 70px;
+    z-index: 1000;
+    transition: all .25s ease-in-out;
+    background-color: #343a40; /* Updated color */
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full height */
+}
+
+.sidebar-custom{
+    margin-top: 3%;
+}
+
+#sidebar.expand {
+    width: 260px;
+    min-width: 260px;
+}
+
+.toggle-btn {
+    background-color: transparent;
+    cursor: pointer;
+    border: 0;
+    padding: 1rem 1.5rem;
+}
+
+.toggle-btn i {
+    font-size: 1.5rem;
+    color: #FFF;
+}
+
+.sidebar-logo {
+    margin: auto 0;
+}
+
+.sidebar-logo a {
+    color: #FFF;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.sidebar-nav {
+    padding: 2rem 0;
+    flex: 1 1 auto;
+}
+
+a.sidebar-link {
+    padding: .625rem 1.625rem;
+    color: #FFF;
+    display: block;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-link i {
+    font-size: 1.1rem;
+    margin-right: .75rem;
+}
+
+a.sidebar-link:hover {
+    background-color:#343a40;;
+    border-left: 3px solid #3b7ddd;
+}
+
+/* CSS to position the profile picture */
+.profile {
+    margin: 0.5rem auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.logo-img {
+    margin-bottom: 10px; /* Add margin to separate the profile picture from other elements */    
+    border-radius: 55%;
+    padding: 0.2rem;
+    border: 3px solid black;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-top: 2rem;
+
+}
+
+/* CSS to hide the profile picture when the sidebar is collapsed */
+#sidebar:not(.expand) .profile {
+    display: none;
+}
+.profile p{
+    color: #fafbfe;
+    margin-top: .7rem;
+    text-transform: uppercase;
+    font-weight: bolder;
+    font-size: 1.3rem;
+}
+
+
+.sidebar-footer {
+    background-color: #343a40; /* Add your desired background color for the sidebar footer */
+}
+/*----------------------admin logo pic--------------------------*/
+.profile-admin .logos1{
+    position: center;
+    margin-left: 5rem;
+    width: 6rem;
+    height: 6rem;
+    margin-top: 2rem;
+}
+.profile-admin p{
+    color: white;
+    text-align: center;
+    margin-top: .5rem;
+    text-transform: uppercase;
+    font-weight: bolder;
+    font-size: 1.3rem;
+}
+/*----------------------white line Between navbar and sidebar--------------------------*/
+.navbar-custom {
+    width: calc(100%); /* Adjust width */
+    position: fixed; /* Fixed position */
+    border-bottom: 1px solid white;
+    z-index: 1050; /* Ensure it is above other content */
+    background-color: #343a40; /* Change as needed */
+    padding-top: 10px; /* Add padding to avoid overlap with the sidebar */
+}
+
+.nav-center{
+    position: center;
+}
+
+.icon-spacing {
+    margin-right: 8px; /* Adjust the value as needed */
+  }
+  
+.btn-con {
+    background-color: blue;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-con:hover {
+    background-color: darkblue;
+}
+
+
+.clickable-card {
+    cursor: pointer;
+}
+
+
+/* Style for positioning the eye icon inside the input field */
+.input-group {
+    position: relative;
+}
+
+.input-group-text {
+    cursor: pointer;
+    position: absolute;
+    right: 1px;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background-color: transparent;
+    border: none;
+}
+
+.form-control {
+    padding-right: 2.5rem;
+}
+
+
+/* sidebar and navar style */
+
+.sidebar-item .active {
+    background-color: black; /* Or any color that fits your design */
+    color: white;
+    font-weight: bold;
+    border-left: 5px solid #0056b3; /* Add a border on the active item */
+}
+.sidebar-item .active i {
+    color: white; /* Change the icon color */
+}
+
+
+/* Admin_dashboard Style */
+
+/* Updated Styles for the Card Area */
+.clickable-card {
+    transition: transform 0.2s;
+    border-radius: 10px; /* Rounded corners */
+    overflow: hidden; /* Prevent content overflow */
+    position: relative; /* To position icons inside */
+}
+.clickable-card:hover {
+    transform: scale(1.05); /* Slightly enlarge the card on hover */
+    cursor: pointer;
+}
+/* Colorful gradients for each card */
+.bg-primary {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+.bg-warning {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+}
+.bg-success {
+    background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+}
+.bg-danger {
+    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+}
+.bg-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+/* Style for card header */
+.card-header {
+    font-size: 1.25rem;
+    font-weight: bold;
+    background: transparent;
+    border-bottom: none; /* Remove border */
+    color: #fff;
+    padding-top: 1rem;
+}
+/* Style for card body */
+.card-body {
+    padding: 1.5rem;
+    color: #fff;
+}
+/* Add a small settings icon at the top-right */
+.card-body::after {
+    content: '\f013'; /* FontAwesome cog icon */
+    font-family: 'Bootstrap Icons';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.6); /* Subtle white color */
+}
+/* Style for the card title */
+.card-title {
+    font-size: 2rem; /* Larger number */
+    margin-bottom: 0.5rem;
+}
+/* Style for the card text */
+.card-text {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8); /* Slightly lighter text */
+}
+/* Optional: Adjust container spacing */
+#cardArea {
+    margin-top: 2rem;
+}
+.custom-bg{
+    background-color: #1E90FF;
+}
+.bg-cust{
+    background-color: #00BFFF;
+}
+.bg-suc{
+    background-color: #E1AD01;
+}
+.bg-dan{
+    background-color: #48D1CC;
+}
+.bg-inf{
+    background-color: #3CB371;
+}
+.bg-fine{
+    background-color: #F4A460;
+}
+
+.announcement-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background: transparent; /* White background with transparency */
+            backdrop-filter: blur(10px); /* Apply blur effect */
+            position: relative;
+        }
+        .announcement-box h5 {
+            margin-bottom: 5px;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .announcement-box p {
+            margin-bottom: 5px;
+        }
+        .announcement-image {
+            margin-top: 10px;
+        }
+        .announcement-box img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .announcement-text {
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+        .time-passed {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 0.9em;
+            color: #343a40;
+            margin-top: 3px;
+        }
+        .announcement-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 15px;
+        }
+        .announcement-box h5 {
+            margin-bottom: 0;
+        }
+        .posted-by {
+            margin-top: 5px;
+            font-size: 0.95rem;
+            color: #343a40;
+        }
+        .announcement-image img {
+            width: 300px;
+            height: auto;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .card-placeholder img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: cover;
+        }
+        .border-announce {
+            background-color: transparent;
+            backdrop-filter: blur(10px);
+        }
+        .hours-container {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+            color: #343a40;
+            
+        }
+        #service-hours {
+            font-size: 2rem;
+            color:crimson;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+        }
+        #service-hours h2 {
+            color: #343a40;
+            background-color: transparent;
+            backdrop-filter: blur(10px);
+        }
+        .items-cen {
+            align-items: center;
+            text-align: center;
+        }
+        .margtop {
+            margin-top: 10%;
+        }
+        .dropdown-toggle {
+            justify-content: space-around;
+        }
+        #datetime {
+            border-radius: 5px;
+        }
+        #datetime-date,
+        #datetime-time {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .custom-bgs {
+            background: transparent; /* White background with transparency */
+            backdrop-filter: blur(10px); /* Apply blur effect */
+            padding: 15px; /* Optional padding *//* Optional border radius */
+        }
+        .text-color {
+            color: #343a40;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-btn{
+            width: 110px;
+            height: 32px;
+            margin-bottom: 2%;
+            font-size: 14px;
+        }
+/*-------------------------------------- Display Books file Style ----------------------------*/
+.table thead th {
+    background-color: rgb(3, 163, 3);
+    color: white;
+    font-weight: bold;
+    border-bottom: #1979ca;
+}
+.table .book-title {
+    font-weight: bold;
+    color: #156295;
+    text-decoration: none;
+    text-align: 2%;
+}
+.table .books-link {
+    color: #337ab7;
+}
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+.icon-size {
+    font-size: 1.5rem;
+}
+.action-column {
+    text-align: center;
+}
+.custom-btn {
+    width: 140px;
+    height: 30px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form-control-sm {
+    height: 30px;
+    font-size: 0.875rem;
+}
+#searchForm .form-select,
+#searchForm .form-control {
+    height: calc(2.25rem + 2px);
+    width: 200px;
+}         
+
+/************************** LOGIN *****************/

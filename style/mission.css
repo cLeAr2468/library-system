@@ -1,0 +1,64 @@
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+.vision-mission,
+.learning-commons {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.border-box {
+    border: 2px solid white;
+    padding: 30px;
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    background-color: #fff;
+}
+
+.vision-mission h1,
+.learning-commons h1 {
+    color: black;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.vision-mission h2,
+.learning-commons h2 {
+    font-size: 1.8rem;
+    color: black;
+    margin-top: 30px;
+    font-weight: bold;
+}
+
+.content p,
+.learning-commons p,
+.content ul li,
+.learning-commons ul li {
+    color: #333;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.divider {
+    border-top: 1px solid #ddd;
+    margin: 20px auto;
+    width: 80%;
+}
+
+.content ul,
+.learning-commons ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.content ul li,
+.learning-commons ul li {
+    font-size: 18px;
+    margin-bottom: 10px;
+}

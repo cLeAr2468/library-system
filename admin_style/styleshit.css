@@ -1,0 +1,97 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.bg-img {
+    background-image: url('../images/background.jpg');
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.header-text {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    font-size: 36px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.login-container {
+    position: absolute;
+    top:55%; /* Adjust this value as needed */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9); /* Optional: makes the background slightly transparent */
+    padding: 20px;
+    border-radius: 8px;
+}
+
+
+.login-container h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.form-control {
+    margin-bottom: 15px;
+}
+
+.login-btn {
+    width: 100%;
+}
+
+.footer-text {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+}
+
+
+table {
+    position: relative;
+    border-collapse: collapse;
+    width: auto;
+    margin: 0 auto; /* Center the table */
+    table-layout: auto; /* Adjust the table size based on content */
+}
+
+th, td {
+    background-color: #ddd;
+    border: 2px solid black;
+    padding: 10px;
+    text-align: left;
+    word-wrap: break-word; /* Wrap long content in cells */
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.approve-btn, .remove-btn {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.approve-btn {
+    background-color: green;
+    color: white;
+}
+
+.remove-btn {
+    background-color: red;
+    color: white;
+}

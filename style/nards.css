@@ -1,0 +1,113 @@
+* {
+    box-sizing: border-box;
+}
+.announcement-box {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: transparent; /* White background with transparency */
+    backdrop-filter: blur(10px); /* Apply blur effect */
+    position: relative;
+}
+.announcement-box h5 {
+    margin-bottom: 5px;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.announcement-box p {
+    margin-bottom: 5px;
+}
+.announcement-image {
+    margin-top: 10px;
+}
+.announcement-box img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+.announcement-text {
+    font-size: 1.1em;
+    font-weight: 500;
+}
+.time-passed {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 0.9em;
+    color: #343a40;
+    margin-top: 3px;
+}
+.announcement-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 15px;
+}
+.posted-by {
+    margin-top: 5px;
+    font-size: 0.95rem;
+    color: #343a40;
+}
+.announcement-image img {
+    width: 300px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.custom-bg {
+    background-image: url("../images/bg.png");
+}
+.card-placeholder img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+}
+.border-announce {
+    background-color: transparent;
+    backdrop-filter: blur(10px);
+}
+.hours-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+    color: #343a40;
+}
+#service-hours {
+    font-size: 2rem;
+    color:crimson;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-weight: bold;
+}
+#service-hours h2 {
+    color: #343a40;
+    background-color: transparent;
+    backdrop-filter: blur(10px);
+}
+.items-cen {
+    align-items: center;
+    text-align: center;
+}
+.margtop {
+    margin-top: 10%;
+}
+.dropdown-toggle {
+    justify-content: space-around;
+}
+#datetime {
+    border-radius: 5px;
+}
+#datetime-date,
+#datetime-time {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.selected-category {
+    color: #156295;
+}
