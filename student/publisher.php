@@ -56,11 +56,7 @@ $publisher = $publish->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </div>
-    <footer class="footer">
-        <div class="container text-center">
-            <span class="text-muted">© 2024 NwSSU Library. All rights reserved.</span>
-        </div>
-    </footer>
+    <?php include '../student/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function searchPublisher() {

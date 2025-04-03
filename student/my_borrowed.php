@@ -106,10 +106,6 @@ $currentDate = date('Y-m-d');
         </div>
     </div>
 </div>
-<footer class="footer">
-    <div class="container text-center">
-        <span class="text-muted">© 2024 NwSSU Library. All rights reserved.</span>
-    </div>
-</footer>
+<?php include '../student/footer.php'; ?>
 </body>
 </html>

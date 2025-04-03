@@ -135,83 +135,83 @@ $categories = $categories_query->fetchAll(PDO::FETCH_COLUMN);
                         </tbody>
                     </table>
                 </div>
-                <!-- Mobile view for books (visible only on small screens) -->
-                <div class="md:hidden space-y-4 mt-4">
-                    <?php if (!empty($books)): ?>
+                <!-- Mobile Card View (visible only on mobile) -->
+                <div class="md:hidden space-y-4">
+                    <?php if (empty($books)): ?>
+                        <div class="p-4 text-center text-sm text-gray-500 bg-white rounded-lg shadow">
+                            No books found
+                        </div>
+                    <?php else: ?>
                         <?php foreach ($books as $book): ?>
-                            <div class="border rounded-md p-4 bg-white shadow-sm">
-                                <div class="flex items-center mb-3">
-                                    <div class="mr-4">
-                                        <?php if (!empty($book['books_image'])): ?>
-                                            <img src="../uploaded_file/<?php echo htmlspecialchars($book['books_image']); ?>" alt="Book Cover"
-                                                class="object-cover border border-gray-200" style="width: 60px; height: 80px;">
-                                        <?php else: ?>
-                                            <div class="flex items-center justify-center bg-gray-200 bg-opacity-65 text-gray-600 text-xs text-center"
-                                                style="width: 60px; height: 80px;">
-                                                No Cover
+                            <div class="bg-white rounded-lg shadow overflow-hidden">
+                                <div class="p-4">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 mr-4">
+                                            <?php if (!empty($book['books_image'])): ?>
+                                                <img src="../uploaded_file/<?php echo htmlspecialchars($book['books_image']); ?>" alt="Book Cover" class="h-32 w-24 object-cover rounded shadow-sm">
+                                            <?php else: ?>
+                                                <div class="h-32 w-24 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                                                    <span class="text-xs font-bold">Book Cover</span>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-medium text-primary">
+                                                <a href="studbook_detail.php?id=<?php echo urlencode($book['id']); ?>">
+                                                    <?php echo htmlspecialchars($book['title']); ?>
+                                                </a>
+                                            </h3>
+                                            <div class="mt-1 text-sm text-gray-500">
+                                                <p><span class="font-medium">Author:</span>
+                                                    <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>" class="text-primary">
+                                                        <?php echo htmlspecialchars($book['author']); ?>
+                                                    </a>
+                                                </p>
+                                                <p><span class="font-medium">Publisher:</span>
+                                                    <a href="publisher_browse.php?publisher=<?php echo urlencode($book['publisher']); ?>" class="text-primary">
+                                                        <?php echo htmlspecialchars($book['publisher']); ?>
+                                                    </a>
+                                                </p>
                                             </div>
-                                        <?php endif; ?>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <a href="studbook_detail.php?id=<?php echo urlencode($book['id']); ?>" class="book-title font-medium">
-                                            <?php echo htmlspecialchars($book['title']); ?>
-                                        </a>
-                                        <div class="text-xs text-gray-600">Call No: <?php echo htmlspecialchars($book['id']); ?></div>
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2 text-sm">
-                                    <div>
-                                        <span class="font-medium text-gray-700">Author:</span>
-                                        <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>" class="books-link block">
-                                            <?php echo htmlspecialchars($book['author']); ?>
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <span class="font-medium text-gray-700">Publisher:</span>
-                                        <a href="publisher_browse.php?publisher=<?php echo urlencode($book['publisher']); ?>" class="books-link block">
-                                            <?php echo htmlspecialchars($book['publisher']); ?>
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <span class="font-medium text-gray-700">Status:</span>
-                                        <span><?php echo htmlspecialchars($book['status']); ?></span>
-                                    </div>
-                                    <div>
-                                        <span class="font-medium text-gray-700">Copies:</span>
-                                        <span><?php echo htmlspecialchars($book['copies']); ?></span>
-                                    </div>
-                                    <div class="col-span-2">
-                                        <span class="font-medium text-gray-700">ISBN:</span>
-                                        <span><?php echo htmlspecialchars($book['ISBN']); ?></span>
+                                    <div class="mt-4 flex justify-between text-sm">
+                                        <div>
+                                            <span class="<?php echo $book['status'] === 'available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'; ?> px-3 py-1 rounded-full  font-medium inline-flex items-center">
+                                                <span class="<?php echo $book['status'] === 'available' ? 'bg-green-400' : 'bg-red-400'; ?> w-2 h-2 rounded-full mr-2"></span>
+                                                <?php echo htmlspecialchars($book['status']); ?>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">Copies:</span>
+                                            <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">
+                                                <?php echo htmlspecialchars($book['copies']); ?>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="text-center py-8 text-gray-500">No books found</div>
                     <?php endif; ?>
                 </div>
+            </div>
 
-                <!-- Pagination -->
-                <div class="flex justify-center mt-6">
-                    <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <a href="?page=<?= $i; ?>&category=<?php echo urlencode($selected_category); ?>"
-                                class="<?= ($i === $page) ? 'bg-primary text-white' : 'bg-white text-gray-500 hover:bg-gray-50' ?> relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium">
-                                <?= $i; ?>
-                            </a>
-                        <?php endfor; ?>
-                    </nav>
-                </div>
+            <!-- Pagination -->
+            <div class="flex justify-center mt-6">
+                <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a href="?page=<?= $i; ?>&category=<?php echo urlencode($selected_category); ?>"
+                            class="<?= ($i === $page) ? 'bg-primary text-white' : 'bg-white text-gray-500 hover:bg-gray-50' ?> relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium">
+                            <?= $i; ?>
+                        </a>
+                    <?php endfor; ?>
+                </nav>
             </div>
         </div>
     </div>
+    </div>
 
-    <footer class="py-6 mt-8 bg-white border-t border-gray-200">
-        <div class="container mx-auto text-center">
-            <span class="text-gray-600">© 2024 NwSSU Library. All rights reserved.</span>
-        </div>
-    </footer>
+    <?php include '../student/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

@@ -74,11 +74,7 @@ function searchBooksByCategory($searchTerm, $conn) {
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-6 mt-8">
-        <div class="container mx-auto text-center">
-            <span>© 2024 NwSSU Library. All rights reserved.</span>
-        </div>
-    </footer>
+    <?php include '../student/footer.php'; ?>
 
     <script>
         // Search categories function

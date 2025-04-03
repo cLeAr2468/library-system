@@ -133,11 +133,7 @@ $totalPages = ceil($totalBooks / $limit);
             </nav>
         </div>
     </div>
-    <footer class="footer">
-        <div class="container text-center">
-            <span class="text-muted">© 2024 NwSSU Library. All rights reserved.</span>
-        </div>
-    </footer>
+    <?php include '../student/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

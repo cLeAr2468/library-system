@@ -38,7 +38,7 @@
             </div>
             
             <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-300">
-                <p>&copy; <?php echo date('Y'); ?> NwSSU Library Management System. All rights reserved.</p>
+                <p>&copy; <?php echo date('Y'); ?> Developed By: Jerald Reyes | NwSSU Library Management System. All rights reserved.</p>
             </div>
         </div>
     </footer>

@@ -124,11 +124,7 @@ function timeAgo($status, $cancel_date, $reserve_date, $borrowed_date, $return_d
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
-    <footer class="footer">
-        <div class="container text-center">
-            <span class="text-muted">© 2024 NwSSU Library. All rights reserved.</span>
-        </div>
-    </footer>
+    <?php include '../student/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Include SweetAlert2 for alerts -->
 </body>
 

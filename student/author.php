@@ -95,11 +95,7 @@ $totalPages = ceil($totalAuthors / $limit); // Calculate total pages
     </nav>
     </div>
     </div>
-    <footer class="footer">
-        <div class="container text-center">
-            <span class="text-muted">© 2024 NwSSU Library. All rights reserved.</span>
-        </div>
-    </footer>
+    <?php include '../student/footer.php'; ?>
     <script>
         function searchAuthor() {
             const input = document.getElementById('searchInput').value.toLowerCase(); // Get the search input

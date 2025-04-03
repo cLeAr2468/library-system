@@ -19,7 +19,7 @@ if ($user_id) {
     $profile_image = $student['images'] ?? '../images/prof.jpg';
 } else {
     // Redirect to login if not logged in
-    header('Location: ../index.php');
+    header('Location: ../index.html');
     exit();
 }
 // Handle image upload and update
@@ -180,12 +180,7 @@ function fetchBookCount($conn, $user_id, $status) {
         </div>
     </div>
     
-    <!-- Footer -->
-    <footer class="py-4 mt-4 sm:mt-8 bg-white shadow-inner">
-        <div class="container mx-auto text-center px-4">
-            <span class="text-gray-600 text-sm sm:text-base">© 2024 NwSSU Library. All rights reserved.</span>
-        </div>
-    </footer>
+    <?php include '../student/footer.php'; ?>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -204,51 +199,6 @@ function fetchBookCount($conn, $user_id, $status) {
             reader.readAsDataURL(file);
             document.getElementById("changePhotoBtn").style.display = "block";
         }
-    });
-
-    // Form submission handling
-    document.getElementById('saveChanges') && document.getElementById('saveChanges').addEventListener('click', function() {
-        // Get form data
-        let formData = new FormData(document.getElementById('updateForm'));
-        // Send AJAX request
-        fetch('profile.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Profile Updated',
-                        text: data.message || 'Your profile has been updated successfully!',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Update Failed',
-                        text: data.message || 'An error occurred while updating your profile. Please try again.',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Network Error',
-                    text: 'Unable to communicate with the server. Please check your internet connection and try again.',
-                    confirmButtonText: 'OK'
-                });
-            });
     });
 
     // Add responsive menu toggle if needed

@@ -244,11 +244,7 @@ $totalReservedBooks = count($reservedBooks);
         </div>
     </div>
     
-    <footer class="bg-white border-t border-gray-200 mt-8">
-        <div class="container mx-auto px-4 py-4 text-center text-sm text-gray-500">
-            <span>© 2024 NwSSU Library. All rights reserved.</span>
-        </div>
-    </footer>
+    <?php include '../student/footer.php'; ?>
 
     <script>
     document.querySelectorAll('.cancel-btn').forEach(button => {

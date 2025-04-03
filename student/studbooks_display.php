@@ -484,7 +484,7 @@
                 </div>
             </div>
         </div>
-
+        <?php include '../student/footer.php'; ?>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Mobile elements
