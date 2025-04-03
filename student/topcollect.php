@@ -194,19 +194,19 @@ $profile_image = $student['images'] ?? '../images/prof.jpg'; // Fallback if no i
                                                 <?php endif; ?>
                                             </div>
                                             <div class="flex-1">
-                                                <h3 class="text-lg font-medium text-primary">
+                                                <h3 class="text-lg font-medium text-[#156295]">
                                                     <a href="studbook_detail.php?id=<?php echo urlencode($book['id']); ?>">
                                                         <?php echo htmlspecialchars($book['title']); ?>
                                                     </a>
                                                 </h3>
                                                 <div class="mt-1 text-sm text-gray-500">
-                                                    <p><span class="font-medium">Author:</span> 
-                                                        <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>" class="text-primary">
+                                                    <p><span class="font-medium ">Author:</span> 
+                                                        <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>" class="text-blue-600">
                                                             <?php echo htmlspecialchars($book['author']); ?>
                                                         </a>
                                                     </p>
                                                     <p><span class="font-medium">Publisher:</span> 
-                                                        <a href="publisher_browse.php?publisher=<?php echo urlencode($book['publisher']); ?>" class="text-primary">
+                                                        <a href="publisher_browse.php?publisher=<?php echo urlencode($book['publisher']); ?>" class="text-blue-600">
                                                             <?php echo htmlspecialchars($book['publisher']); ?>
                                                         </a>
                                                     </p>
@@ -221,7 +221,7 @@ $profile_image = $student['images'] ?? '../images/prof.jpg'; // Fallback if no i
                                             </span>
                                             </div>
                                             <div>
-                                                <span class="font-medium">Copies:</span> 
+                                                <span class="font-medium"><?php echo $book['copies'] == 1 ? 'Copy' : 'Copies'; ?>:</span> 
                                                 <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">
                                                     <?php echo htmlspecialchars($book['copies']); ?>
                                                 </span>
@@ -241,7 +241,7 @@ $profile_image = $student['images'] ?? '../images/prof.jpg'; // Fallback if no i
                         <ul class="flex flex-wrap justify-center gap-1">
                             <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                                 <li>
-                                    <a href="?page=<?php echo $i; ?>" class="<?php echo $i === $page ? 'bg-primary text-white' : 'bg-white text-gray-700 hover:bg-gray-50'; ?> px-3 py-1 sm:px-4 sm:py-2 border border-gray-300 rounded-md text-sm font-medium">
+                                    <a href="?page=<?php echo $i; ?>" class="<?php echo $i === $page ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'; ?> px-3 py-1 sm:px-4 sm:py-2 border border-gray-300 rounded-md text-sm font-medium">
                                         <?php echo $i; ?>
                                     </a>
                                 </li>

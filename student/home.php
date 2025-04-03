@@ -49,15 +49,15 @@ try {
         }
 
         .animate-marquee-slow {
-            animation: marquee 30s linear infinite;
+            animation: marquee 15s linear infinite;
         }
 
         .animate-marquee-medium {
-            animation: marquee 25s linear infinite;
+            animation: marquee 8s linear infinite;
         }
 
         .animate-marquee-fast {
-            animation: marquee 20s linear infinite;
+            animation: marquee 5s linear infinite;
         }
 
         .hover-pause:hover {

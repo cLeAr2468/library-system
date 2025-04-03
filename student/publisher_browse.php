@@ -49,7 +49,7 @@ $publishers = $publishers_query->fetchAll(PDO::FETCH_COLUMN);
                     <h2 class="text-2xl font-bold text-gray-800">Search</h2>
                 </div>
                 <?php if ($selected_publisher): ?>
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 text-primary">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 text-blue-600">
                         <span class="mb-2 md:mb-0">
                             Publisher: <strong><?php echo htmlspecialchars($selected_publisher); ?></strong>
                             [ <a href="../student/publisher.php" class="hover:underline">All</a> ]
@@ -152,22 +152,29 @@ $publishers = $publishers_query->fetchAll(PDO::FETCH_COLUMN);
                                             <?php endif; ?>
                                         </div>
                                         <div class="flex-1">
-                                            <h3 class="text-lg font-medium text-primary">
+                                            <h3 class="text-lg font-medium text-[#156295]">
                                                 <a href="studbook_detail.php?id=<?php echo urlencode($book['id']); ?>">
                                                     <?php echo htmlspecialchars($book['title']); ?>
                                                 </a>
                                             </h3>
                                             <div class="mt-1 text-sm text-gray-500">
                                                 <p><span class="font-medium">Author:</span>
-                                                    <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>" class="text-primary">
+                                                    <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>" class="text-blue-600">
                                                         <?php echo htmlspecialchars($book['author']); ?>
                                                     </a>
                                                 </p>
                                                 <p><span class="font-medium">Publisher:</span>
-                                                    <a href="publisher_browse.php?publisher=<?php echo urlencode($book['publisher']); ?>" class="text-primary">
+                                                    <a href="publisher_browse.php?publisher=<?php echo urlencode($book['publisher']); ?>" class="text-blue-600">
                                                         <?php echo htmlspecialchars($book['publisher']); ?>
                                                     </a>
                                                 </p>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="flex flex-wrap gap-y-1 gap-x-4 text-xs text-gray-500 mt-2">
+                                                    <div class="flex items-center">
+                                                        <?php echo $book['copies'] == 1 ? 'copy' : 'copies'; ?> : <?php echo htmlspecialchars($book['copies']); ?>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -179,9 +186,9 @@ $publishers = $publishers_query->fetchAll(PDO::FETCH_COLUMN);
                                             </span>
                                         </div>
                                         <div>
-                                            <span class="font-medium">Copies:</span>
-                                            <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">
-                                                <?php echo htmlspecialchars($book['copies']); ?>
+                                            <span class="text-sm text-gray-500">Category :</span>
+                                            <span class="px-2 py-1 font-medium text-blue-600">
+                                                <?php echo htmlspecialchars($book['category']); ?>
                                             </span>
                                         </div>
                                     </div>
@@ -191,12 +198,13 @@ $publishers = $publishers_query->fetchAll(PDO::FETCH_COLUMN);
                     <?php endif; ?>
                 </div>
             </div>
+
             <!-- Pagination -->
-            <div class="flex justify-center mt-6">
+            <div class="flex justify-center py-4">
                 <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <a href="?page=<?= $i; ?>&publisher=<?php echo urlencode($selected_publisher); ?>"
-                            class="<?= ($i === $page) ? 'bg-primary text-white' : 'bg-white text-gray-500 hover:bg-gray-50' ?> relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium">
+                        <a href="?page=<?= $i; ?>&category=<?php echo urlencode($selected_category); ?>"
+                            class="<?= ($i === $page) ? 'bg-blue-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50' ?> relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium">
                             <?= $i; ?>
                         </a>
                     <?php endfor; ?>

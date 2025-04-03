@@ -43,11 +43,11 @@ $publisher = $publish->fetchAll(PDO::FETCH_ASSOC);
                         <?php foreach ($publisher as $pub): ?>
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="publisher_browse.php?publisher=<?php echo urlencode($pub['publisher']); ?>" class="text-primary hover:underline"><?php echo urlencode($pub['publisher']); ?></a>
+                                    <a href="publisher_browse.php?publisher=<?php echo urlencode($pub['publisher']); ?>" class="text-[#156295] font-medium hover:underline"><?php echo urlencode($pub['publisher']); ?></a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($pub['item_count']); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                   <a href="publisher_browse.php?publisher=<?php echo urlencode($pub['publisher']); ?>" class="text-primary hover:underline">Browse</a>
+                                   <a href="publisher_browse.php?publisher=<?php echo urlencode($pub['publisher']); ?>" class="text-blue-600 hover:underline">Browse</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

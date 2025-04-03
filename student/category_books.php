@@ -59,11 +59,11 @@ function searchBooksByCategory($searchTerm, $conn) {
                         <?php foreach ($categories as $category): ?>
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="search_categ.php?category=<?php echo urlencode($category['category']); ?>" class="text-primary hover:underline"><?php echo htmlspecialchars($category['category']); ?></a>
+                                    <a href="search_categ.php?category=<?php echo urlencode($category['category']); ?>" class="text-[#156295] font-medium hover:underline"><?php echo htmlspecialchars($category['category']); ?></a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($category['item_count']); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="search_categ.php?category=<?php echo urlencode($category['category']); ?>" class="text-primary hover:underline">Browse</a>
+                                    <a href="search_categ.php?category=<?php echo urlencode($category['category']); ?>" class="text-blue-600 hover:underline">Browse</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

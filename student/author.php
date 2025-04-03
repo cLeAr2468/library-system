@@ -56,11 +56,11 @@ $totalPages = ceil($totalAuthors / $limit); // Calculate total pages
                         <?php foreach ($authors as $author): ?>
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="selected_author.php?author=<?php echo urlencode($author['author']); ?>" class="text-primary hover:underline"><?php echo urlencode($author['author']); ?></a>
+                                    <a href="selected_author.php?author=<?php echo urlencode($author['author']); ?>" class="text-[#156295] font-medium hover:underline"><?php echo urlencode($author['author']); ?></a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo htmlspecialchars($author['item_count']); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="selected_author.php?author=<?php echo urlencode($author['author']); ?>" class="text-primary hover:underline">Browse</a>
+                                    <a href="selected_author.php?author=<?php echo urlencode($author['author']); ?>" class="text-blue-600 hover:underline">Browse</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

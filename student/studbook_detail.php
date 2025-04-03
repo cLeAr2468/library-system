@@ -176,7 +176,7 @@ try {
                         <?php endif; ?>
                     </div>
                     <div class="w-full md:w-2/3 pr-0 md:pr-8 md:order-first">
-                        <h2 class="text-2xl font-bold mb-4"><?php echo htmlspecialchars($book['title']); ?></h2>
+                        <h2 class="text-2xl text-[#156295] font-bold mb-4"><?php echo htmlspecialchars($book['title']); ?></h2>
                         <table class="w-full border-collapse">
                             <tbody>
                                 <tr class="border-b">
@@ -226,7 +226,7 @@ try {
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th class="py-2 text-left">Copy</th>
+                                    <th class="py-2 text-left"><?php echo $book['copies'] == 1 ? 'Copy' : 'Copies'; ?></th>
                                     <td class="py-2"><?php echo htmlspecialchars($book['copies']); ?></td>
                                 </tr>
                                 <tr class="border-b">
@@ -351,10 +351,10 @@ try {
                     </span>
                 </div>
                 <div class="flex-1 ">
-                    <h2 class="text-lg font-bold text-gray-900"><?php echo htmlspecialchars($book['title']); ?></h2>
+                    <h2 class="text-lg font-bold text-[#156295]"><?php echo htmlspecialchars($book['title']); ?></h2>
                     <p class="text-sm text-gray-600">By: <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>" class="text-blue-600 hover:underline"><?php echo htmlspecialchars($book['author']); ?></a></p>
                     <p class="text-sm text-gray-600 mt-2">
-                        <span class="font-medium"></span> <?php echo htmlspecialchars($book['copies']); ?>
+                        <span class="font-medium"><?php echo $book['copies'] == 1 ? 'Copy' : 'Copies'; ?>:</span> <?php echo htmlspecialchars($book['copies']); ?>
                     </p>
                     <p class="text-sm text-gray-600 mt-2">
                         <span class="font-medium italic text-gray-400"><?php echo htmlspecialchars($book['material_type']); ?>
@@ -428,37 +428,38 @@ try {
             </div>
         </div>
     </div>
+    <div class="container mx-auto px-auto py-8 max-w-7xl">
         <div class="bg-white rounded-lg shadow-lg p-6 md:p-10 mb-8">
-                <h4 class="text-xl font-semibold mb-6 text-center">Related Items</h4>
-                <div class="block md:hidden overflow-hidden">
-                    <div class="flex whitespace-nowrap animate-marquee hover:pause">
-                        <?php
-                        for ($i = 0; $i < 2; $i++):
-                            foreach ($relatedBooks as $relatedBook):
-                        ?>
-                                <div class="inline-block flex-shrink-0 p-3 mx-2">
-                                    <a href="?id=<?php echo urlencode($relatedBook['id']); ?>" title="Click to view details">
-                                        <div class="w-[100px] h-[150px] rounded-md shadow-lg overflow-hidden">
-                                            <?php if (!empty($relatedBook['books_image'])): ?>
-                                                <img src="../uploaded_file/<?php echo htmlspecialchars($relatedBook['books_image']); ?>"
-                                                    alt="Related Book Cover"
-                                                    class="w-full h-full object-cover hover:opacity-90 transition duration-300">
-                                            <?php else: ?>
-                                                <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold hover:opacity-90 transition duration-300">
-                                                    Book Cover
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-                                    </a>
-                                </div>
-                        <?php
-                            endforeach;
-                        endfor;
-                        ?>
-                    </div>
+            <h4 class="text-xl font-semibold mb-6 text-center">Related Items</h4>
+            <div class="block md:hidden overflow-hidden">
+                <div class="flex whitespace-nowrap animate-marquee hover:pause">
+                    <?php
+                    for ($i = 0; $i < 2; $i++):
+                        foreach ($relatedBooks as $relatedBook):
+                    ?>
+                            <div class="inline-block flex-shrink-0 p-3 mx-2">
+                                <a href="?id=<?php echo urlencode($relatedBook['id']); ?>" title="Click to view details">
+                                    <div class="w-[100px] h-[150px] rounded-md shadow-lg overflow-hidden">
+                                        <?php if (!empty($relatedBook['books_image'])): ?>
+                                            <img src="../uploaded_file/<?php echo htmlspecialchars($relatedBook['books_image']); ?>"
+                                                alt="Related Book Cover"
+                                                class="w-full h-full object-cover hover:opacity-90 transition duration-300">
+                                        <?php else: ?>
+                                            <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold hover:opacity-90 transition duration-300">
+                                                Book Cover
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </a>
+                            </div>
+                    <?php
+                        endforeach;
+                    endfor;
+                    ?>
                 </div>
             </div>
-            </div>
+        </div>
+    </div>
     <?php include '../student/footer.php'; ?>
     <script>
         document.querySelectorAll('.reserve-btn').forEach(button => {

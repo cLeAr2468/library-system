@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancelReservation']) 
 
 // Fetch reserved books for the student
 $reservedBooksQuery = $conn->prepare("
-    SELECT rb.*, b.title, b.books_image, b.author, b.publisher, b.copyright, b.ISBN, b.id as book_id 
+    SELECT rb.*, b.title, b.books_image, b.author, b.publisher, b.copyright, b.category, b.ISBN, b.id as book_id 
     FROM reserve_books rb 
     JOIN books b ON rb.book_id = b.id 
     WHERE rb.user_id = ? AND rb.status = 'reserved'  -- Ensure you're checking for the correct reserved status
@@ -209,26 +209,35 @@ $totalReservedBooks = count($reservedBooks);
                                                     No Cover
                                                 </div>
                                             <?php endif; ?>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 mt-2">
+                                                    <?php echo htmlspecialchars($book['status']); ?>
+                                            </span>
                                         </div>
-                                        <div class="flex-1 min-w-0">
-                                            <h3 class="text-sm font-medium text-gray-900 truncate">
+                                        <div class="flex-1 min-w-0 ">
+                                            <h3 class="text-sm font-medium text-[#156295] truncate">
                                                 <a href="studbook_detail.php?id=<?php echo urlencode($book['book_id']); ?>" class="hover:text-primary">
                                                     <?php echo htmlspecialchars($book['title']); ?>
                                                 </a>
                                             </h3>
-                                            <p class="text-xs text-gray-500">By <?php echo htmlspecialchars($book['author']); ?></p>
-                                            <p class="text-xs text-gray-500"><?php echo htmlspecialchars($book['publisher']); ?></p>
-                                            <div class="mt-1 flex items-center">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                    <?php echo htmlspecialchars($book['status']); ?>
+                                            <p class="text-xs text-gray-500 mt-2">
+                                                Author : <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>" class="text-blue-600 hover:underline"><?php echo htmlspecialchars($book['author']); ?></a>
+                                            </p>
+                                            <p class="text-xs text-gray-500 mt-2">
+                                            Publisher :  <a href="publisher_browse.php?publisher=<?php echo urlencode($book['publisher']); ?>" class="text-blue-600 hover:underline"><?php echo htmlspecialchars($book['publisher']); ?></a>
+                                            </p>
+                                            <p class="text-xs text-gray-500 mt-2">
+                                                Category : <a href="search_categ.php?category=<?php echo urlencode($book['category']); ?>" class="text-blue-600 hover:underline"><?php echo htmlspecialchars($book['category']); ?></a>
+                                            </p>
+                                            <div class="flex items-center mt-2">
+                                                <span class="text-xs text-gray-500">
+                                                    <?php echo $book['copies'] == 1 ? 'Copy' : 'Copies'; ?>: <?php echo htmlspecialchars($book['copies']); ?>
                                                 </span>
-                                                <span class="ml-2 text-xs text-gray-500">Copies: <?php echo htmlspecialchars($book['copies']); ?></span>
                                             </div>
-                                            <p class="text-xs text-gray-500 mt-1">Reserved: <?php echo htmlspecialchars($book['reserved_date']); ?></p>
+                                            <p class="text-xs text-gray-500 mt-2">Reserved: <?php echo htmlspecialchars($book['reserved_date']); ?></p>
                                             <div class="mt-2">
                                                 <form class="cancel-form" method="POST" action="">
                                                     <input type="hidden" name="cancelReservation" value="<?php echo htmlspecialchars($book['book_id']); ?>">
-                                                    <button type="button" class="cancel-btn text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-md text-xs transition duration-150 ease-in-out">
+                                                    <button type="button" class="cancel-btn text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-full text-xs transition duration-150 ease-in-out">
                                                         Cancel Reservation
                                                     </button>
                                                 </form>
@@ -272,8 +281,8 @@ $totalReservedBooks = count($reservedBooks);
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, cancel it',
-                cancelButtonText: 'No, keep it',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
                 customClass: {
                     popup: 'rounded-lg',
                     title: 'text-xl font-bold',
@@ -306,7 +315,7 @@ $totalReservedBooks = count($reservedBooks);
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Reservation Canceled',
-                                html: `<p class="text-green-600">${data.message}</p><p class="mt-2">The book is now available for other students.</p>`,
+                                html: `<p class="text-green-600">${data.message}</p><p class="mt-2"></p>`,
                                 confirmButtonText: 'OK',
                                 confirmButtonColor: '#3085d6',
                                 customClass: {

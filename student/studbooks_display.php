@@ -139,9 +139,9 @@
                         <div class="flex flex-col w-full md:w-auto gap-3">
                             <!-- Category buttons -->
                             <div class="hidden md:block md:flex flex-wrap gap-2">
-                                <a href="../student/category_books.php" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors">Categories</a>
-                                <a href="../student/author.php" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors">Author</a>
-                                <a href="../student/publisher.php" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors">Publisher</a>
+                                <a href="../student/category_books.php" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors">Categories</a>
+                                <a href="../student/author.php" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors">Author</a>
+                                <a href="../student/publisher.php" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors">Publisher</a>
                             </div>
                             <!-- Search form -->
                             <form id="searchForm" class="relative flex flex-col sm:flex-row gap-2 w-full md:w-auto" method="GET" action="">
@@ -168,7 +168,7 @@
                                         name="query"
                                         placeholder="Search..."
                                         value="<?php echo htmlspecialchars($search_query); ?>"
-                                        class="rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 pl-3 pr-10 py-2 text-sm w-full"
+                                        class="rounded-lg focus:ring-blue-600 focus:ring-opacity-50 pl-3 pr-10 py-2 text-sm w-full"
                                         autocomplete="off">
                                     <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -217,7 +217,7 @@
                                             </td>
                                             <td class="px-4 py-4">
                                                 <div class="space-y-1">
-                                                    <a href="studbook_detail.php?id=<?php echo urlencode($book['id']); ?>" class="text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                                                    <a href="studbook_detail.php?id=<?php echo urlencode($book['id']); ?>" class="text-[#156295] hover:text-blue-800 hover:underline font-medium">
                                                         <?php echo htmlspecialchars($book['title']); ?>
                                                     </a>
                                                     <div class="text-xs text-gray-500">
@@ -337,13 +337,13 @@
                     </div>
                     <div id="mobileMenu" class="hidden px-4 pb-4">
                     <div class="flex flex-col gap-2">
-                        <a href="../student/category_books.php" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors text-center">
+                        <a href="../student/category_books.php" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors text-center">
                             Categories
                         </a>
-                        <a href="../student/author.php" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors text-center">
+                        <a href="../student/author.php" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors text-center">
                             Author
                         </a>
-                        <a href="../student/publisher.php" class="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors text-center">
+                        <a href="../student/publisher.php" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors text-center">
                             Publisher
                         </a>
                     </div>
@@ -398,25 +398,31 @@
                                             <div class="flex flex-col h-full">
                                                 <div>
                                                     <a href="studbook_detail.php?id=<?php echo urlencode($book['id']); ?>"
-                                                        class="text-base font-semibold text-gray-900 hover:text-primary line-clamp-2">
+                                                        class="text-base font-semibold text-[#156295] hover:text-primary line-clamp-2">
                                                         <?php echo htmlspecialchars($book['title']); ?>
                                                     </a>
                                                     <p class="mt-1 text-sm text-gray-600">
-                                                        By : <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>"
-                                                            class="text-primary hover:text-primary-hover">
+                                                        Author : <a href="selected_author.php?author=<?php echo urlencode($book['author']); ?>"
+                                                            class="text-blue-600 hover:text-primary-hover">
                                                             <?php echo htmlspecialchars($book['author']); ?>
+                                                        </a>
+                                                    </p>
+                                                    <p class="mt-1 text-sm text-gray-600">
+                                                        Publisher : <a href="publisher_browse.php?publisher=<?php echo urlencode($book['author']); ?>"
+                                                            class="text-blue-600 hover:text-primary-hover">
+                                                            <?php echo htmlspecialchars($book['publisher']); ?>
                                                         </a>
                                                     </p>
                                                     <div class="mt-auto">
                                                     <div class="flex flex-wrap gap-y-1 gap-x-4 text-xs text-gray-500 mt-2">
                                                         <div class="flex items-center">
-                                                            <?php echo htmlspecialchars($book['copies']); ?> copies
+                                                            <?php echo $book['copies'] == 1 ? 'copy' : 'copies'; ?> : <?php echo htmlspecialchars($book['copies']); ?>
                                                         </div>
                                                         <div class="flex items-center">
-                                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
-                                                            </svg>
-                                                            ISBN: <?php echo htmlspecialchars($book['ISBN']); ?>
+                                                            Category :  <a href="search_categ.php?category=<?php echo urlencode($book['category']); ?>"
+                                                            class="text-blue-600 font-medium hover:text-primary-hover mx-auto ml-2">
+                                                            <?php echo htmlspecialchars($book['category']); ?>
+                                                        </a>
                                                         </div>
                                                     </div>
                                                 </div>
