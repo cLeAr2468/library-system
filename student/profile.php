@@ -1,4 +1,5 @@
 <?php
+session_start(); // Start the session
 ob_start(); // Start output buffering
 // Database connection
 include '../component-library/connect.php';
@@ -139,7 +140,7 @@ function fetchBookCount($conn, $user_id, $status) {
                                 <tr class="border-b hover:bg-gray-50">
                                     <th class="py-2 sm:py-3 px-4 sm:px-2 text-left font-medium">Account Status</th>
                                     <td class="py-2 sm:py-3 px-4 sm:px-2">
-                                        <span class="<?php echo $student['account_status'] === 'Active' ? 'text-green-600' : 'text-red-600'; ?> font-medium">
+                                        <span class="<?php echo $student['account_status'] === 'active' ? 'text-green-600' : 'text-red-600'; ?> font-medium">
                                             <?php echo htmlspecialchars($student['account_status']); ?>
                                         </span>
                                     </td>

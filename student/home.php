@@ -1,4 +1,5 @@
 <?php
+session_start(); // Start the session
 include '../component-library/connect.php';
 include '../student/side_navbars.php';
 try {

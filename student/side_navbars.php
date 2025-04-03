@@ -1,76 +1,105 @@
 <?php 
-session_start(); // Start the session
+// Include the database connection
+if (session_status() === PHP_SESSION_NONE) {
+    session_start(); // Start the session only if it's not already started
+}
+include '../component-library/connect.php';
+
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     // Redirect to login page if not logged in
     header('Location: ../index.php'); // Adjust this path as necessary
     exit();
 }
+
 $user_id = $_SESSION['user_id'];
+$user_first_name = $_SESSION['first_name'];
 $profile_image = '../images/prof.jpg'; // Default profile image
+
 // Fetch student profile data
-include '../component-library/connect.php'; // Include the database connection
 $stud = $conn->prepare("SELECT first_name, middle_name, last_name, patron_type, email, address, images FROM user_info WHERE user_id = ?");
 $stud->execute([$user_id]);
 $student = $stud->fetch(PDO::FETCH_ASSOC);
+
 if ($student) {
     $profile_image = $student['images'] ?? $profile_image; // Fallback if no image
 }
+
 // Handle profile update via AJAX
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProfile'])) {
-    $first_name = trim($_POST['first_name']);
-    $middle_name = trim($_POST['middle_name']);
-    $last_name = trim($_POST['last_name']);
-    $email = trim($_POST['email']);
-    $address = trim($_POST['address']);
-    $current_password = $_POST['current_password'] ?? null;
-    $new_password = $_POST['new_password'] ?? null;
-    $confirm_password = $_POST['confirm_password'] ?? null;
-    try {
-        // Validate inputs
-        if (empty($first_name) || empty($last_name) || empty($email) || empty($address)) {
-            throw new Exception("All fields are required.");
-        }
-        // Variable to track if password update is needed
-        $updatePassword = false;
-        // Check if new password is provided
-        if (!empty($new_password)) {
-            if (empty($current_password)) {
-                throw new Exception("Current password is required when updating the password.");
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Check if this is a profile update request
+    if (isset($_POST['action']) && $_POST['action'] === 'update_profile') {
+        // This is a profile update request, not a book reservation
+        $first_name = trim($_POST['first_name']);
+        $middle_name = trim($_POST['middle_name']);
+        $last_name = trim($_POST['last_name']);
+        $email = trim($_POST['email']);
+        $address = trim($_POST['address']);
+        $current_password = $_POST['current_password'] ?? null;
+        $new_password = $_POST['new_password'] ?? null;
+        $confirm_password = $_POST['confirm_password'] ?? null;
+        
+        try {
+            // Validate inputs
+            if (empty($first_name) || empty($last_name) || empty($email) || empty($address)) {
+                throw new Exception("All fields are required.");
             }
-            // Check if the current password is correct
-            $stmt = $conn->prepare("SELECT password FROM user_info WHERE user_id = ?");
-            $stmt->execute([$user_id]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($user && password_verify($current_password, $user['password'])) {
-                $updatePassword = true;
-            } else {
-                throw new Exception("Current password is incorrect.");
+            
+            // Variable to track if password update is needed
+            $updatePassword = false;
+            
+            // Check if new password is provided
+            if (!empty($new_password)) {
+                if (empty($current_password)) {
+                    throw new Exception("Current password is required when updating the password.");
+                }
+                
+                // Check if the current password is correct
+                $stmt = $conn->prepare("SELECT password FROM user_info WHERE user_id = ?");
+                $stmt->execute([$user_id]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($user && password_verify($current_password, $user['password'])) {
+                    $updatePassword = true;
+                } else {
+                    throw new Exception("Current password is incorrect.");
+                }
             }
+            
+            // Prepare the update query
+            $updateQuery = "UPDATE user_info SET first_name = ?, middle_name = ?, last_name = ?, email = ?, address = ?";
+            $params = [$first_name, $middle_name, $last_name, $email, $address];
+            
+            // Update password if new password is provided and matches confirmation
+            if ($updatePassword && $new_password === $confirm_password) {
+                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                $updateQuery .= ", password = ?";
+                $params[] = $hashed_password;
+            } elseif ($updatePassword) {
+                throw new Exception("New password and confirm password do not match.");
+            }
+            
+            $updateQuery .= " WHERE user_id = ?";
+            $params[] = $user_id;
+            
+            $updateStmt = $conn->prepare($updateQuery);
+            $updateStmt->execute($params);
+            
+            // Update session variables
+            $_SESSION['first_name'] = $first_name;
+            
+            echo json_encode(['success' => true, 'message' => 'Profile updated successfully.']);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
-        // Prepare the update query
-        $updateQuery = "UPDATE user_info SET first_name = ?, middle_name = ?, last_name = ?, email = ?, address = ?";
-        $params = [$first_name, $middle_name, $last_name, $email, $address];
-        // Update password if new password is provided and matches confirmation
-        if ($updatePassword && $new_password === $confirm_password) {
-            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-            $updateQuery .= ", password = ?";
-            $params[] = $hashed_password;
-        } elseif ($updatePassword) {
-            throw new Exception("New password and confirm password do not match.");
-        }
-        $updateQuery .= " WHERE user_id = ?";
-        $params[] = $user_id;
-        $updateStmt = $conn->prepare($updateQuery);
-        $updateStmt->execute($params);
-        echo json_encode(['success' => true, 'message' => 'Profile updated successfully.']);
-    } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => 'Error updating profile: ' . $e->getMessage()]);
-    } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit();
     }
-    exit();
+    // If it's not a profile update, it might be a book reservation or other POST request
+    // We'll ignore it here since it's handled elsewhere
 }
+
 // Logout Logic
 if (isset($_POST['logout'])) {
     session_unset();
@@ -116,7 +145,7 @@ if (isset($_POST['logout'])) {
                     <span class="hidden md:inline">My Account</span>
                     <i class="fas fa-chevron-down text-xs"></i>
                 </button>
-                <div id="account-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden">
+                <div id="account-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-30 hidden">
                     <a href="profile.php?user_id=<?php echo htmlspecialchars($user_id); ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" id="settingsBtn">Settings</a>
                     <div class="border-t border-gray-100"></div>
@@ -153,7 +182,7 @@ if (isset($_POST['logout'])) {
                             <a href="#" class="block py-3 px-4 hover:bg-green-600 transition flex items-center">
                                 Online Services <i class="fas fa-chevron-down ml-1 text-xs"></i>
                             </a>
-                            <ul class="absolute left-0 mt-0 w-48 bg-white text-black shadow-lg py-1 z-10 hidden group-hover:block">
+                            <ul class="absolute left-0 mt-0 w-48 text-black shadow-lg py-1 z-10 hidden group-hover:block">
                                 <li><a href="https://www.proquest.com/" target="_blank" class="block px-4 py-2 hover:bg-blue-500 hover:text-white transition">Proquest Central Database</a></li>
                                 <li><a href="https://ejournals.ph/" target="_blank" class="block px-4 py-2 hover:bg-blue-500 hover:text-white transition">Philippine E-Journals</a></li>
                                 <li><a href="https://starbooks.ph/" target="_blank" class="block px-4 py-2 hover:bg-blue-500 hover:text-white transition">Dost Starbooks</a></li>
@@ -228,10 +257,10 @@ if (isset($_POST['logout'])) {
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
                 <div class="flex justify-between items-center border-b p-4">
                     <h5 class="text-xl font-bold">Settings</h5>
-                    <button class="text-gray-500 hover:text-gray-700" id="closeModalButton">&times;</button>
+                    <button class="text-gray-500 hover:text-gray-700" id="closeSettingsBtn">&times;</button>
                 </div>
                 <div class="p-4">
-                    <form id="updateForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <form id="profileForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="mb-4">
                             <label for="userId" class="block text-sm font-medium">User ID</label>
                             <input type="text" class="w-full p-2 border rounded-lg bg-gray-100" id="userId" value="<?php echo htmlspecialchars($user_id); ?>" readonly>
@@ -272,11 +301,11 @@ if (isset($_POST['logout'])) {
                             <label for="confirm_password" class="block text-sm font-medium">Confirm Password</label>
                             <input type="password" class="w-full p-2 border rounded-lg" id="confirm_password" name="confirm_password">
                         </div>
-                        <input type="hidden" name="updateProfile" value="1">
+                        <input type="hidden" name="action" value="update_profile">
                     </form>
                 </div>
                 <div class="flex justify-end border-t p-4">
-                    <button class="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" id="closeButton">Close</button>
+                    <button class="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2" id="closeSettingsBtn">Close</button>
                     <button class="bg-blue-500 text-white px-4 py-2 rounded-lg" id="saveChanges">Update</button>
                 </div>
             </div>
@@ -313,31 +342,33 @@ if (isset($_POST['logout'])) {
             mobileSlideMenu.classList.add('-translate-x-full'); // Hide the menu
             backdrop.classList.add('hidden'); // Hide the backdrop
         });
-        // Settings modal
+        // Settings Modal
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsModal = document.getElementById('settingsModal');
-        const closeModalButton = document.getElementById('closeModalButton');
-        const closeButton = document.getElementById('closeButton');
-        const saveChanges = document.getElementById('saveChanges');
-        const updateForm = document.getElementById('updateForm');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        const saveChangesBtn = document.getElementById('saveChanges');
+
         settingsBtn.addEventListener('click', function() {
             settingsModal.classList.remove('hidden');
         });
-        function closeSettingsModal() {
+
+        closeSettingsBtn.addEventListener('click', function() {
             settingsModal.classList.add('hidden');
-        }
-        closeModalButton.addEventListener('click', closeSettingsModal);
-        closeButton.addEventListener('click', closeSettingsModal);
+        });
+
         // Close modal when clicking outside
-        settingsModal.addEventListener('click', function(event) {
-            if (event.target === settingsModal) {
-                closeSettingsModal();
+        settingsModal.addEventListener('click', function(e) {
+            if (e.target === settingsModal) {
+                settingsModal.classList.add('hidden');
             }
         });
-        // Handle form submission
-        saveChanges.addEventListener('click', function() {
-            const formData = new FormData(updateForm);
-            fetch(window.location.href, {
+
+        // Handle profile form submission
+        saveChangesBtn.addEventListener('click', function() {
+            const profileForm = document.getElementById('profileForm');
+            const formData = new FormData(profileForm);
+            
+            fetch('side_navbars.php', {
                 method: 'POST',
                 body: formData
             })
@@ -345,31 +376,29 @@ if (isset($_POST['logout'])) {
             .then(data => {
                 if (data.success) {
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
+                        title: 'Success!',
                         text: data.message,
-                        confirmButtonColor: '#00a000'
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6'
                     }).then(() => {
-                        closeSettingsModal();
                         location.reload();
                     });
                 } else {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
+                        title: 'Error!',
                         text: data.message,
-                        confirmButtonColor: '#00a000'
+                        icon: 'error',
+                        confirmButtonColor: '#3085d6'
                     });
                 }
             })
             .catch(error => {
                 Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while updating your profile.',
                     icon: 'error',
-                    title: 'Error',
-                    text: 'An unexpected error occurred. Please try again.',
-                    confirmButtonColor: '#00a000'
+                    confirmButtonColor: '#3085d6'
                 });
-                console.error('Error:', error);
             });
         });
     </script>

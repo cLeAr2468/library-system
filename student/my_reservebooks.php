@@ -1,6 +1,6 @@
 <?php
+session_start(); // Start the session
 include '../component-library/connect.php';
-include '../student/side_navbars.php';
 // Database connection
 try {
     $conn = new PDO("mysql:host=$db_host;dbname=$db_name", $user_name, $user_password);
@@ -9,7 +9,7 @@ try {
 } catch (PDOException $e) {
     die('Database connection failed: ' . $e->getMessage());
 }
-
+$user_id = $_SESSION['user_id'];
 // Fetch student profile data
 $stud = $conn->prepare("SELECT * FROM user_info WHERE user_id = ?");
 $stud->execute([$user_id]);
@@ -18,33 +18,39 @@ $profile_image = $student['images'] ?? '../images/prof.jpg'; // Fallback if no i
 
 
 // Handle reservation cancellation
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancelReservation'])) {
-    $call_no = $_POST['cancelReservation'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancelReservation']) && !isset($_POST['action'])) {
+    // Add a specific identifier for this function to ensure it doesn't interfere with other POST handlers
+    $isReservationCancellation = true;
+    
+    $book_id = $_POST['cancelReservation'];
     try {
         // Start a transaction
         $conn->beginTransaction();
         // Get the current date and time for the cancel_date
         $cancel_date = date('Y-m-d H:i:s');
         // Update the status of the reserved book to 'canceled' and set the cancel_date
-        $stmt = $conn->prepare("UPDATE reserve_books SET status = 'canceled', cancel_date = ? WHERE call_no = ? AND user_id = ? AND status = 'reserved'");
-        $stmt->execute([$cancel_date, $call_no, $user_id]);
+        $stmt = $conn->prepare("UPDATE reserve_books SET status = 'canceled', cancel_date = ? WHERE book_id = ? AND user_id = ? AND status = 'reserved'");
+        $stmt->execute([$cancel_date, $book_id, $user_id]);
 
         // Check if any row was updated
         if ($stmt->rowCount() > 0) {
-            // Increment the copies in the books table
-            $updateCopiesStmt = $conn->prepare("UPDATE books SET copies = copies + 1 WHERE call_no = ?");
-            $updateCopiesStmt->execute([$call_no]);
+            // Get the book details to update copies
+            $bookDetailsStmt = $conn->prepare("SELECT b.id, b.copies FROM books b WHERE b.id = ?");
+            $bookDetailsStmt->execute([$book_id]);
+            $bookDetails = $bookDetailsStmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($bookDetails) {
+                // Increment the copies in the books table
+                $updateCopiesStmt = $conn->prepare("UPDATE books SET copies = copies + 1 WHERE id = ?");
+                $updateCopiesStmt->execute([$book_id]);
 
-            // Check if the book status needs to be updated to 'available'
-            $bookStatusStmt = $conn->prepare("SELECT copies, status FROM books WHERE call_no = ?");
-            $bookStatusStmt->execute([$call_no]);
-            $book = $bookStatusStmt->fetch(PDO::FETCH_ASSOC);
-
-            // If the book has copies available, update its status to 'available'
-            if ($book && $book['copies'] > 0 && $book['status'] !== 'available') {
-                $updateStatusStmt = $conn->prepare("UPDATE books SET status = 'available' WHERE call_no = ?");
-                $updateStatusStmt->execute([$call_no]);
+                // Check if the book status needs to be updated to 'available'
+                if ($bookDetails['copies'] + 1 > 0) {
+                    $updateStatusStmt = $conn->prepare("UPDATE books SET status = 'available' WHERE id = ?");
+                    $updateStatusStmt->execute([$book_id]);
+                }
             }
+            
             // Commit the transaction
             $conn->commit();
             // Successful cancellation
@@ -66,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancelReservation']))
 
 // Fetch reserved books for the student
 $reservedBooksQuery = $conn->prepare("
-    SELECT rb.*, b.title, b.books_image, b.author, b.publisher, b.copyright, b.ISBN 
+    SELECT rb.*, b.title, b.books_image, b.author, b.publisher, b.copyright, b.ISBN, b.id as book_id 
     FROM reserve_books rb 
-    JOIN books b ON rb.call_no = b.call_no 
+    JOIN books b ON rb.book_id = b.id 
     WHERE rb.user_id = ? AND rb.status = 'reserved'  -- Ensure you're checking for the correct reserved status
 ");
 $reservedBooksQuery->execute([$user_id]);
@@ -86,104 +92,213 @@ $totalReservedBooks = count($reservedBooks);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Reserved Books</title>
-    <link rel="stylesheet" href="../admin_style/design.css">
-    <link rel="stylesheet" href="../style/home.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00a000',
+                        secondary: '#333333',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
-<body>
-    <div class="container mt-5">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="card-title">My Reserved Books</h2>
+<body class="bg-gray-50">
+    <?php include 'side_navbars.php'; ?>
+    <div class="container mx-auto px-4 py-6">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2 md:mb-0">My Reserved Books</h2>
+                    <div class="text-sm text-gray-600">
+                        Student ID: <span class="font-semibold"><?php echo htmlspecialchars($user_id); ?></span>
+                    </div>
                 </div>
-                <div class="book-title selected-category">
-                    Student ID: <strong><?php echo htmlspecialchars($user_id); ?></strong>
-                </div>
-                <table class="table table-bordered mt-3">
-                    <thead class="thead-light">
-                        <tr>
-                            <th></th> <!-- Empty header for book image column -->
-                            <th>Title</th>
-                            <th>Authors/Editors</th>
-                            <th>Publisher</th>
-                            <th>Status</th>
-                            <th>Copies</th>
-                            <th>Reserved Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($reservedBooks)): ?>
-                            <tr>
-                                <td colspan="6" class="text-center">No books found</td>
-                            </tr>
-                        <?php else: ?>
-                            <?php foreach ($reservedBooks as $book): ?>
+                
+                <?php if (empty($reservedBooks)): ?>
+                    <div class="text-center py-8">
+                        <p class="text-gray-500 text-lg">No reserved books found</p>
+                    </div>
+                <?php else: ?>
+                    <!-- Desktop view (hidden on mobile) -->
+                    <div class="hidden md:block overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <td class="text-center book-image-container">
-                                        <?php if (!empty($book['books_image'])): ?>
-                                            <img src="../uploaded_file/<?php echo htmlspecialchars($book['books_image']); ?>" alt="Book Cover" class="img-thumbnail" style="width: 80px; height: 110px;">
-                                        <?php else: ?>
-                                            <div style="width: 80px; height: 110px; background-color: rgba(232, 232, 232, 0.65); display: flex; align-items: center; justify-content: center; color: #555;">
-                                                Missing Cover Photo
-                                            </div>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <div class="book-info">
-                                            <div>
-                                                <a href="studbook_detail.php?call_no=<?php echo urlencode($book['call_no']); ?>" class="book-title">
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cover</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Publisher</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Copies</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reserved Date</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <?php foreach ($reservedBooks as $book): ?>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <?php if (!empty($book['books_image'])): ?>
+                                                <img src="../uploaded_file/<?php echo htmlspecialchars($book['books_image']); ?>" alt="Book Cover" class="h-24 w-16 object-cover rounded shadow-sm">
+                                            <?php else: ?>
+                                                <div class="h-24 w-16 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs text-center">
+                                                    No Cover
+                                                </div>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                <a href="studbook_detail.php?id=<?php echo urlencode($book['book_id']); ?>" class="hover:text-primary">
                                                     <?php echo htmlspecialchars($book['title']); ?>
-                                                </a><br>
-                                                <small>Publish Date: <?php echo htmlspecialchars($book['copyright']); ?></small><br>
-                                                <small>ISBN: <?php echo htmlspecialchars($book['ISBN']); ?></small><br>
-                                                <small>Call No: <?php echo htmlspecialchars($book['call_no']); ?></small>
+                                                </a>
+                                            </div>
+                                            <div class="text-xs text-gray-500">
+                                                <p>Publish Date: <?php echo htmlspecialchars($book['copyright']); ?></p>
+                                                <p>ISBN: <?php echo htmlspecialchars($book['ISBN']); ?></p>
+                                                <p>Book ID: <?php echo htmlspecialchars($book['book_id']); ?></p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <?php echo htmlspecialchars($book['author']); ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <?php echo htmlspecialchars($book['publisher']); ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                <?php echo htmlspecialchars($book['status']); ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <?php echo htmlspecialchars($book['copies']); ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <?php echo htmlspecialchars($book['reserved_date']); ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <form class="cancel-form" method="POST" action="">
+                                                <input type="hidden" name="cancelReservation" value="<?php echo htmlspecialchars($book['book_id']); ?>">
+                                                <button type="button" class="cancel-btn text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-md transition duration-150 ease-in-out">
+                                                    Cancel
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Mobile view (hidden on desktop) -->
+                    <div class="md:hidden space-y-4">
+                        <?php foreach ($reservedBooks as $book): ?>
+                            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                                <div class="p-4">
+                                    <div class="flex items-start space-x-4">
+                                        <div class="flex-shrink-0">
+                                            <?php if (!empty($book['books_image'])): ?>
+                                                <img src="../uploaded_file/<?php echo htmlspecialchars($book['books_image']); ?>" alt="Book Cover" class="h-24 w-16 object-cover rounded shadow-sm">
+                                            <?php else: ?>
+                                                <div class="h-24 w-16 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs text-center">
+                                                    No Cover
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <h3 class="text-sm font-medium text-gray-900 truncate">
+                                                <a href="studbook_detail.php?id=<?php echo urlencode($book['book_id']); ?>" class="hover:text-primary">
+                                                    <?php echo htmlspecialchars($book['title']); ?>
+                                                </a>
+                                            </h3>
+                                            <p class="text-xs text-gray-500">By <?php echo htmlspecialchars($book['author']); ?></p>
+                                            <p class="text-xs text-gray-500"><?php echo htmlspecialchars($book['publisher']); ?></p>
+                                            <div class="mt-1 flex items-center">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    <?php echo htmlspecialchars($book['status']); ?>
+                                                </span>
+                                                <span class="ml-2 text-xs text-gray-500">Copies: <?php echo htmlspecialchars($book['copies']); ?></span>
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-1">Reserved: <?php echo htmlspecialchars($book['reserved_date']); ?></p>
+                                            <div class="mt-2">
+                                                <form class="cancel-form" method="POST" action="">
+                                                    <input type="hidden" name="cancelReservation" value="<?php echo htmlspecialchars($book['book_id']); ?>">
+                                                    <button type="button" class="cancel-btn text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-md text-xs transition duration-150 ease-in-out">
+                                                        Cancel Reservation
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td><?php echo htmlspecialchars($book['author']); ?></td>
-                                    <td><?php echo htmlspecialchars($book['publisher']); ?></td>
-                                    <td><?php echo htmlspecialchars($book['status']); ?></td> <!-- Status from reserve_books -->
-                                    <td><?php echo htmlspecialchars($book['copies']); ?></td> <!-- Copies from reserve_books -->
-                                    <td><?php echo htmlspecialchars($book['reserved_date']); ?></td>
-                                    <td>
-                                        <form class="cancel-form" method="POST" action="">
-                                            <input type="hidden" name="cancelReservation" value="<?php echo htmlspecialchars($book['call_no']); ?>">
-                                            <button type="button" class="btn btn-danger btn-sm cancel-btn">Cancel</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
-    <footer class="footer">
-        <div class="container text-center">
-            <span class="text-muted">© 2024 NwSSU Library. All rights reserved.</span>
+    
+    <footer class="bg-white border-t border-gray-200 mt-8">
+        <div class="container mx-auto px-4 py-4 text-center text-sm text-gray-500">
+            <span>© 2024 NwSSU Library. All rights reserved.</span>
         </div>
     </footer>
-    <script>
 
+    <script>
     document.querySelectorAll('.cancel-btn').forEach(button => {
         button.addEventListener('click', function() {
             const form = this.closest('.cancel-form');
-            const callNo = form.querySelector('input[name="cancelReservation"]').value;
+            const bookId = form.querySelector('input[name="cancelReservation"]').value;
+            
+            // Improved selector to find the book title in both desktop and mobile views
+            let bookTitle;
+            const parentRow = this.closest('tr');
+            if (parentRow) {
+                // Desktop view - find the title in the table row
+                const titleCell = parentRow.querySelector('td:nth-child(2) a');
+                bookTitle = titleCell ? titleCell.textContent.trim() : 'this book';
+            } else {
+                // Mobile view - find the title in the card
+                const titleElement = this.closest('div').querySelector('h3 a');
+                bookTitle = titleElement ? titleElement.textContent.trim() : 'this book';
+            }
 
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to cancel this reservation for the book with Call No: " + callNo + "?",
-                icon: 'warning',
+                title: 'Cancel Reservation',
+                html: `<p>Are you sure you want to cancel your reservation for:</p><p class="font-bold mt-2">${bookTitle}</p>`,
+                icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, cancel it!',
-                cancelButtonText: 'No, keep it'
+                confirmButtonText: 'Yes, cancel it',
+                cancelButtonText: 'No, keep it',
+                customClass: {
+                    popup: 'rounded-lg',
+                    title: 'text-xl font-bold',
+                    htmlContainer: 'text-gray-700',
+                    confirmButton: 'px-4 py-2 rounded-md',
+                    cancelButton: 'px-4 py-2 rounded-md'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Processing...',
+                        html: 'Please wait while we cancel your reservation',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
                     // Send AJAX request to cancel reservation
                     fetch('', {
                         method: 'POST',
@@ -195,18 +310,32 @@ $totalReservedBooks = count($reservedBooks);
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Reservation Canceled',
-                                text: data.message || 'Your reservation has been canceled successfully!',
-                                confirmButtonText: 'OK'
+                                html: `<p class="text-green-600">${data.message}</p><p class="mt-2">The book is now available for other students.</p>`,
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#3085d6',
+                                customClass: {
+                                    popup: 'rounded-lg',
+                                    title: 'text-xl font-bold',
+                                    htmlContainer: 'text-gray-700',
+                                    confirmButton: 'px-4 py-2 rounded-md'
+                                }
                             }).then(() => {
-                                // Optionally, you can refresh the table or the entire page
-                                location.reload(); // Reload the page to reflect changes
+                                // Reload the page to reflect changes
+                                location.reload();
                             });
                         } else {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Cancellation Failed',
-                                text: data.message || 'An error occurred while canceling your reservation. Please try again.',
-                                confirmButtonText: 'OK'
+                                html: `<p class="text-red-600">${data.message}</p><p class="mt-2">Please try again or contact the library staff for assistance.</p>`,
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#3085d6',
+                                customClass: {
+                                    popup: 'rounded-lg',
+                                    title: 'text-xl font-bold',
+                                    htmlContainer: 'text-gray-700',
+                                    confirmButton: 'px-4 py-2 rounded-md'
+                                }
                             });
                         }
                     })
@@ -215,14 +344,21 @@ $totalReservedBooks = count($reservedBooks);
                         Swal.fire({
                             icon: 'error',
                             title: 'Network Error',
-                            text: 'Unable to communicate with the server. Please check your internet connection and try again.',
-                            confirmButtonText: 'OK'
+                            html: `<p class="text-red-600">Unable to communicate with the server.</p><p class="mt-2">Please check your internet connection and try again.</p>`,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#3085d6',
+                            customClass: {
+                                popup: 'rounded-lg',
+                                title: 'text-xl font-bold',
+                                htmlContainer: 'text-gray-700',
+                                confirmButton: 'px-4 py-2 rounded-md'
+                            }
                         });
                     });
                 }
             });
         });
     });
-</script>
+    </script>
 </body>
 </html>

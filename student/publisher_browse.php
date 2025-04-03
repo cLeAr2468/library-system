@@ -1,4 +1,5 @@
 <?php
+session_start(); // Start the session
 include '../component-library/connect.php';
 include '../student/side_navbars.php';
 try {
@@ -48,7 +49,7 @@ $publishers = $publishers_query->fetchAll(PDO::FETCH_COLUMN);
                 <?php if ($selected_publisher): ?>
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 text-primary">
                         <span class="mb-2 md:mb-0">
-                            Selected Publisher: <strong><?php echo htmlspecialchars($selected_publisher); ?></strong>
+                            Publisher: <strong><?php echo htmlspecialchars($selected_publisher); ?></strong>
                             [ <a href="../student/category_books.php" class="hover:underline">All</a> ]
                         </span>
                         <div class="relative w-full md:w-auto">

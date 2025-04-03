@@ -200,8 +200,8 @@ include '../admin_panel/ins-dis-function.php';
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-select" id="status" name="status" required>
                                     <option value="" disabled selected>Select Status</option>
-                                    <option value="available">Available</option>
-                                    <option value="Not Available">Not Available</option>
+                                    <option value="available">available</option>
+                                    <option value="not available">not available</option>
                                     <option value="Lost">Lost</option>
                                 </select>
                                 <div class="invalid-feedback">Please select a Status.</div>

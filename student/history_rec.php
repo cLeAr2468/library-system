@@ -1,4 +1,5 @@
 <?php
+session_start(); // Start the session
 include '../component-library/connect.php';
 include '../student/side_navbars.php';
 // Assume the logged-in student ID is stored in session

@@ -51,7 +51,7 @@ $authors = $authors_query->fetchAll(PDO::FETCH_COLUMN);
                 <?php if ($selected_author): ?>
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 text-primary">
                         <span class="mb-2 md:mb-0">
-                            Selected Category: <strong><?php echo htmlspecialchars($selected_author); ?></strong>
+                            Author: <strong><?php echo htmlspecialchars($selected_author); ?></strong>
                             [ <a href="../student/category_books.php" class="hover:underline">All</a> ]
                         </span>
                         <div class="relative w-full md:w-auto">
